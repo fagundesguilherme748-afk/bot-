@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kabum Tips - Dashboard V2</title>
+    <style>
+        :root {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --input-bg: #0f172a;
+            --primary: #0ea5e9;
+            --primary-hover: #0284c7;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #cbd5e1;
+            --input-bg: #f8fafc;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* Top Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-card);
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header img {
+            height: 35px;
+            border-radius: 5px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .c-green {
+            color: var(--success);
+        }
+
+        .c-red {
+            color: var(--danger);
+        }
+
+        .c-blue {
+            color: var(--primary);
+        }
+
+        /* Main Form Area */
+        .main-card {
+            background-color: var(--bg-card);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 25px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Form Elements */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* History Table */
+        .history-card {
+            background-color: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-card h2 {
+            margin-top: 0;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .bg-green {
+            background-color: var(--success);
+        }
+
+        .bg-red {
+            background-color: var(--danger);
+        }
+
+        .bg-gray {
+            background-color: #6b7280;
+        }
+
+        .badge-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+            color: white;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        /* AUTOCOMPLETE GESTÃO-K STYLES */
+        .autocomplete-wrapper {
+            position: relative;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-card);
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .autocomplete-items div {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .autocomplete-items div:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-items div:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .autocomplete-items strong {
+            color: var(--primary);
+        }
+
+        .autocomplete-items div:hover strong {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <img src="/static/logo.png" id="kabumLogo" alt="Logo">
+                Kabum Tips ⚡ Admin V2
+            </h1>
+            <button class="theme-toggle" id="themeBtn" title="Alternar Tema">☀️</button>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Winrate</h3>
+                <p class="stat-value c-blue" id="stat-winrate">0%</p>
+            </div>
+            <div class="stat-card">
+                <h3>Greens ✅</h3>
+                <p class="stat-value c-green" id="stat-greens">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Reds ❌</h3>
+                <p class="stat-value c-red" id="stat-reds">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total</h3>
+                <p class="stat-value" id="stat-total" style="color:var(--text-main)">0</p>
+            </div>
+        </div>
+
+        <!-- Main Panel -->
+        <div class="main-card">
+
+            <!-- Global Configs -->
+            <div class="grid-3">
+                <div class="form-group">
+                    <label>🔒 Senha</label>
+                    <input type="password" id="g_senha" required placeholder="***" value="">
+                </div>
+                <div class="form-group">
+                    <label>📢 Grupo</label>
+                    <select id="g_grupo">
+                        <option value="vip">Grupo VIP 💎</option>
+                        <option value="free">Grupo Free 🆓</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>👤 Tipster</label>
+                    <input type="text" id="g_tipster" value="Kabum" placeholder="Seu nome">
+                </div>
+            </div>
+
+            <hr style="border-color: var(--border-color); margin: 5px 0 25px 0; opacity: 0.5;">
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('futebol')">⚽ FUTEBOL / TRADICIONAL</button>
+                <button class="tab-btn" onclick="switchTab('fifa')">🎮 FIFA / E-SPORTS LIVE</button>
+            </div>
+
+            <!-- FORM FUTEBOL -->
+            <form id="formFutebol" class="tab-content active">
+                <input type="hidden" id="tipo_aba" value="futebol">
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Modo de Envio</label>
+                        <select id="f_modo">
+                            <option value="completo">Completo (Com análise e detalhes)</option>
+                            <option value="resumido">Resumido (Só a Tip Seca p/ copiar)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Agendamento (Minutos)</label>
+                        <input type="number" id="f_agend" min="0" placeholder="0 = Imediato">
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group"><label>Esporte</label><input type="text" id="f_esporte"
+                            placeholder="Futebol"></div>
+                    <div class="form-group"><label>Competição</label><input type="text" id="f_comp"
+                            placeholder="Série A"></div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>⚽ Confronto <span style="color:var(--danger)">*</span></label>
+                    <input type="text" id="f_jogo" required placeholder="Flamengo x Vasco">
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group"><label>📊 Mercado <span style="color:var(--danger)">*</span></label><input
+                            type="text" id="f_mercado" required></div>
+                    <div class="form-group"><label>🎯 Odd <span style="color:var(--danger)">*</span></label><input
+                            type="text" id="f_odd" required></div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group"><label>💰 Unidades</label><input type="text" id="f_unid"
+                            placeholder="Ex: 1U"></div>
+                    <div class="form-group"><label>⏰ Horário</label><input type="text" id="f_hora"
+                            placeholder="Hoje as 21:00"></div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>👉 Link (Aposta) <span style="color:var(--danger)">*</span></label>
+                    <input type="url" id="f_link" required placeholder="https://...">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>📝 Análise / Justificativa (Aparece no modo Completo)</label>
+                    <textarea id="f_analise" placeholder="Escreva os motivos práticos dessa entrada..."></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>🖼️ Imagem / Banner URl (Opcional)</label>
+                    <input type="url" id="f_img" placeholder="https://...">
+                </div>
+
+                <button type="button" class="btn-submit" onclick="submitBet('futebol')">🚀 Enviar Aposta de
+                    Futebol</button>
+            </form>
+
+            <!-- FORM FIFA -->
+            <form id="formFifa" class="tab-content">
+                <input type="hidden" id="fi_modo" value="completo">
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>⚡ Grade do FIFA</label>
+                        <select id="fi_grade">
+                            <option value="8 Minutos (Esoccer Battle e H2H)">8 Minutos (Esoccer Battle e H2H)</option>
+                            <option value="10 Minutos (Outros)">10 Minutos (Outros)</option>
+                            <option value="12 Minutos (GT Leagues)">12 Minutos (GT Leagues)</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Agendamento (Minutos)</label><input type="number" id="fi_agend"
+                            min="0" placeholder="0 = Imediato"></div>
+                </div>
+
+                <div class="form-group full-width autocomplete-wrapper">
+                    <label>🎮 Confronto (Jogadores) <span style="color:var(--danger)">*</span></label>
+                    <input type="text" id="fi_jogo" required placeholder="Kvaratskhelia x Mbappe" autocomplete="off">
+                    <div class="autocomplete-items" id="fi_jogo_list"></div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group autocomplete-wrapper">
+                        <label>📊 Mercado Rápido <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="fi_mercado" value="Over 2.5 Gols FT" required autocomplete="off">
+                        <div class="autocomplete-items" id="fi_mercado_list"></div>
+                    </div>
+                    <div class="form-group"><label>🎯 Odd <span style="color:var(--danger)">*</span></label><input
+                            type="text" id="fi_odd" required></div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group"><label>💰 Unidades Sugeridas</label><input type="text" id="fi_unid"
+                            placeholder="Ex: 0.5U"></div>
+                    <div class="form-group"><label>👉 Link Rápido <span
+                                style="color:var(--danger)">*</span></label><input type="url" id="fi_link" required
+                            placeholder="https://..."></div>
+                </div>
+
+                <button type="button" class="btn-submit" onclick="submitBet('fifa')">⚡ Disparar Alerta FIFA
+                    Live</button>
+            </form>
+
+            <div id="message"></div>
+        </div>
+
+        <!-- History & Tracking -->
+        <div class="history-card">
+            <h2>Últimas Entradas enviadas (Validação)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Aba/Tipo</th>
+                        <th>Jogo</th>
+                        <th>Odd</th>
+                        <th>Status</th>
+                        <th>Validar Resultado</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody">
+                    <tr>
+                        <td colspan="6" style="text-align:center">Carregando...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        // THEME TOGGLE
+        const themeBtn = document.getElementById('themeBtn');
+        themeBtn.addEventListener('click', () => {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                themeBtn.innerText = '🌙';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeBtn.innerText = '☀️';
+            }
+        });
+
+        // TABS LOGIC
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (tabId === 'futebol') {
+                document.getElementById('formFutebol').classList.add('active');
+            } else {
+                document.getElementById('formFifa').classList.add('active');
+            }
+        }
+
+        // FETCH STATS AND HISTORY
+        function loadStats() {
+            fetch('/stats')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update Top Dashboard
+                        document.getElementById('stat-winrate').innerText = data.stats.winrate + '%';
+                        document.getElementById('stat-greens').innerText = data.stats.greens;
+                        document.getElementById('stat-reds').innerText = data.stats.reds;
+                        document.getElementById('stat-total').innerText = data.stats.total;
+
+                        // Update Table
+                        const tbody = document.getElementById('historyBody');
+                        tbody.innerHTML = '';
+
+                        if (data.history.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhuma aposta registrada ainda.</td></tr>';
+                            return;
+                        }
+
+                        data.history.forEach(item => {
+                            const tr = document.createElement('tr');
+
+                            // Badge Status Color
+                            let bgStatus = '';
+                            if (item.status === 'Green') bgStatus = 'bg-green';
+                            else if (item.status === 'Red') bgStatus = 'bg-red';
+                            else if (item.status === 'Devolvido') bgStatus = 'bg-gray';
+                            else bgStatus = 'style="background-color: var(--primary)"';
+
+                            const dataFormatada = new Date(item.data_envio).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+
+                            tr.innerHTML = `
+                            <td>${dataFormatada}</td>
+                            <td><b style="text-transform:uppercase; font-size:11px">${item.tipo_aba}</b></td>
+                            <td>${item.jogo}</td>
+                            <td>${item.odd}</td>
+                            <td><span class="badge-status ${bgStatus}">${item.status}</span></td>
+                            <td class="action-btns">
+                                <button class="btn-sm bg-green" onclick="updateResult(${item.id}, 'Green')" title="Deu Green!">✅</button>
+                                <button class="btn-sm bg-red" onclick="updateResult(${item.id}, 'Red')" title="Deu Red">❌</button>
+                                <button class="btn-sm bg-gray" onclick="updateResult(${item.id}, 'Devolvido')" title="Reembolso">🔙</button>
+                            </td>
+                        `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                })
+                .catch(err => console.error("Erro carregando stats:", err));
+        }
+
+        // UPDATE RESULT (CLICK BUTTONS)
+        function updateResult(id, resultado) {
+            fetch('/update_result', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, status: resultado })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        loadStats(); // Auto refresh
+                    }
+                });
+        }
+
+        // SUBMIT BET
+        function submitBet(aba) {
+            const messageDiv = document.getElementById('message');
+            const senha = document.getElementById('g_senha').value;
+            const grupo = document.getElementById('g_grupo').value;
+            const tipster = document.getElementById('g_tipster').value;
+
+            let payload = {
+                senha: senha,
+                grupo: grupo,
+                tipster: tipster,
+                tipo_aba: aba
+            };
+
+            if (aba === 'futebol') {
+                payload.modo_envio = document.getElementById('f_modo').value;
+                payload.agendamento = document.getElementById('f_agend').value;
+                payload.esporte = document.getElementById('f_esporte').value;
+                payload.competicao = document.getElementById('f_comp').value;
+                payload.jogo = document.getElementById('f_jogo').value;
+                payload.mercado = document.getElementById('f_mercado').value;
+                payload.odd = document.getElementById('f_odd').value;
+                payload.unidades = document.getElementById('f_unid').value;
+                payload.horario = document.getElementById('f_hora').value;
+                payload.link = document.getElementById('f_link').value;
+                payload.analise = document.getElementById('f_analise').value;
+                payload.imagem = document.getElementById('f_img').value;
+
+                if (!payload.jogo || !payload.mercado || !payload.odd || !payload.link) {
+                    alert("Preencha todos os campos com asterisco vermelho em Futebol!"); return;
+                }
+
+            } else if (aba === 'fifa') {
+                payload.modo_envio = 'completo'; // Fifa sempr usa template inteiro
+                payload.tipo_grade_fifa = document.getElementById('fi_grade').value;
+                payload.agendamento = document.getElementById('fi_agend').value;
+                payload.jogo = document.getElementById('fi_jogo').value;
+                payload.mercado = document.getElementById('fi_mercado').value;
+                payload.odd = document.getElementById('fi_odd').value;
+                payload.unidades = document.getElementById('fi_unid').value;
+                payload.link = document.getElementById('fi_link').value;
+
+                if (!payload.jogo || !payload.mercado || !payload.odd || !payload.link) {
+                    alert("Preencha todos os campos com asterisco vermelho no FIFA!"); return;
+                }
+            }
+
+            messageDiv.innerText = "⏳ Processando...";
+            messageDiv.style.display = 'block';
+            messageDiv.style.backgroundColor = 'rgba(14, 165, 233, 0.1)';
+            messageDiv.style.color = 'var(--primary)';
+
+            fetch('/bet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+                .then(response => {
+                    if (response.status === 401) throw new Error("Senha Incorreta! Acesso Negado.");
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success || data.message) {
+                        messageDiv.innerText = "✅ " + data.message;
+                        messageDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                        messageDiv.style.color = 'var(--success)';
+
+                        // Limpar grids apos envio (evita double send)
+                        if (aba === 'futebol') {
+                            document.getElementById('f_jogo').value = '';
+                            document.getElementById('f_mercado').value = '';
+                            document.getElementById('f_odd').value = '';
+                        } else {
+                            document.getElementById('fi_jogo').value = '';
+                        }
+                        setTimeout(loadStats, 1000); // Wait 1 sec and reload stats DB
+                    } else {
+                        messageDiv.innerText = "❌ Erro: " + data.error;
+                        messageDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                        messageDiv.style.color = 'var(--danger)';
+                    }
+                })
+                .catch(error => {
+                    messageDiv.innerText = "❌ " + error.message;
+                    messageDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                    messageDiv.style.color = 'var(--danger)';
+                })
+                .finally(() => {
+                    setTimeout(() => { messageDiv.style.display = 'none'; }, 5000);
+                });
+        }
+
+        // AUTOCOMPLETE ALGORITHM
+        const fifaPlayers = [
+            "Luntik", "Taz", "Boki", "Rafa", "Nero", "Spex", "Menez", "Liam", "Kiki", "Djo",
+            "Peja", "Zzakki", "Vang", "Grover", "Plevis", "Jekos", "Zeus", "Kray", "Inquisitor",
+            "Boulevard", "LaikingDast", "MeLToSiK", "Labotryas", "Upcake22", "Koleso", "Chellovekk",
+            "Miliy", "WBoy", "Sava", "Aleksis", "Gaga", "Bane"
+        ].sort();
+
+        const fifaMarkets = [
+            "Over 1.5 Gols FT", "Over 2.5 Gols FT", "Over 3.5 Gols FT",
+            "Ambas Marcam (BTTS)", "Over 0.5 HT", "Over 1.5 HT",
+            "Casa Vence", "Fora Vence", "Empate", "Handicap Asiático 0.0"
+        ].sort();
+
+        function setupAutocomplete(inputId, listId, dataArray, splitByX) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+
+            input.addEventListener('input', function () {
+                const val = this.value;
+                list.innerHTML = '';
+                if (!val) {
+                    list.style.display = 'none';
+                    return;
+                }
+
+                let searchTerm = val;
+                let prefix = "";
+
+                // Magia: Se tiver ' x ', busca só no segundo jogador
+                if (splitByX && val.includes(' x ')) {
+                    const parts = val.split(' x ');
+                    searchTerm = parts[parts.length - 1]; // pega a palavra depois do ' x '
+                    prefix = parts.slice(0, parts.length - 1).join(' x ') + ' x ';
+                }
+
+                if (searchTerm.trim() === '') {
+                    list.style.display = 'none';
+                    return;
+                }
+
+                let matches = dataArray.filter(item => item.toLowerCase().includes(searchTerm.toLowerCase()));
+
+                if (matches.length > 0) {
+                    list.style.display = 'block';
+                    matches.slice(0, 7).forEach(match => { // Limita a 7 resultados
+                        const div = document.createElement('div');
+                        const regex = new RegExp(`(${searchTerm})`, "gi");
+                        const highlighted = match.replace(regex, "<strong>$1</strong>");
+                        div.innerHTML = highlighted;
+
+                        div.addEventListener('click', function () {
+                            input.value = prefix + match;
+                            // Se for primeiro jogador, já adiciona o ' x ' sozinho pra acelerar
+                            if (splitByX && !prefix) {
+                                input.value += ' x ';
+                            }
+                            list.style.display = 'none';
+                            input.focus();
+                        });
+                        list.appendChild(div);
+                    });
+                } else {
+                    list.style.display = 'none';
+                }
+            });
+
+            // Fecha a lista quando clicar fora
+            document.addEventListener('click', function (e) {
+                if (e.target !== input && e.target !== list) {
+                    list.style.display = 'none';
+                }
+            });
+        }
+
+        setupAutocomplete('fi_jogo', 'fi_jogo_list', fifaPlayers, true);
+        setupAutocomplete('fi_mercado', 'fi_mercado_list', fifaMarkets, false);
+
+        // Initial Load
+        window.onload = loadStats;
+    </script>
+
+</body>
+
+</html>
