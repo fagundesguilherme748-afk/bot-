@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Bet365 Tipster Telegram Bot",
+  "version": "1.0",
+  "description": "Lê apostas da Bet365 e envia direto pro Telegram.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.bet365.com/*",
+    "https://bot-dze4.onrender.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Configurar Bot"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.bet365.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
