@@ -125,35 +125,61 @@ async function enviarParaRender(apostaData) {
     }
 }
 
-// Observa o botão "Fazer Aposta" aparecer e anexa nosso click
+// Observa o botão "Fazer Aposta" aparecer e anexa nosso click GATILHO ALTERNATIVO (MOUSE HOVER JÁ SALVA)
 function monitorarBotaoAposta() {
-    setInterval(() => {
-        // Seletor geral do botão Fazer Aposta da Bet365
-        const btnPlaceBet = document.querySelector('.bs-BtnPlaceBet') ||
-            document.querySelector('.bs-PlaceBetButton') ||
-            document.querySelector('.lb-PlaceBetButton');
+    console.log("👉 Bet Bot: Iniciando busca pelo boletim na tela (MODO SEM SALDO ativado)...");
 
-        // Se achou o botão E ele ainda NÃO tem nosso rastreador (evita click duplicado)
-        if (btnPlaceBet && !btnPlaceBet.dataset.botAttached) {
+    setInterval(() => {
+        // Encontra qualquer botão que pareça fazer aposta ou adicionar fundos
+        const botoesPossiveis = Array.from(document.querySelectorAll('div, button, span')).filter(el => {
+            const txt = el.innerText ? el.innerText.toUpperCase() : '';
+            return txt === 'FAZER APOSTA' || txt === 'PLACE BET' || txt === 'ACEITAR E FAZER APOSTA' || txt === 'FUNDO INSUFICIENTE' || txt === 'DEPOSITAR' || txt === 'ADICIONAR FUNDOS';
+        });
+
+        // Pegar o container inteiro da aposta (O Cartãozinho)
+        const containerBoletim = document.querySelector('.bs-BetSlip') || document.querySelector('.br-BetSlip') || document.querySelector('.bs-ParticipantFixtureDetails_Fixture')?.closest('div');
+
+        const btnPlaceBet = botoesPossiveis.find(b => b.offsetHeight > 10 && !b.dataset.botAttached);
+
+        // --- GATILHO 1: CLICK NO BOTÃO MESMO SEM SALDO ---
+        if (btnPlaceBet) {
             btnPlaceBet.dataset.botAttached = "true";
 
-            console.log("Bet Bot: Botão de Aposta Encontrado! Grampeando...");
+            console.log("🚨 BET BOT: ACHEI O BOTÃO NO BOLETIM!! 🚨", btnPlaceBet);
+            mostrarNotificacaoNaTela("🔄 Bet Bot: MODO TESTE ATIVO! Clique no botão mesmo que dê erro de saldo.");
 
             btnPlaceBet.addEventListener('click', async () => {
-                console.log("Botão de aposta clicado!");
+                console.log("💥 BET BOT: CLICK DETECTADO NO BOTÃO (Mesmo sem saldo)!");
 
-                // Pequeno delay pra dar tempo do DOM renderizar qqr coisa final
-                await delay(300);
+                const boletim = document.querySelector('.bs-BetSlip') || document.querySelector('.br-BetSlip') || document.body;
+                console.log("🔍 DOM HTML do Boletim:\n\n", boletim.innerHTML);
+                console.log("\n\n📝 Texto Puro:\n\n", boletim.innerText);
+
+                await delay(500);
 
                 const data = rasparDadosBoletim();
                 if (data) {
                     enviarParaRender(data);
-                } else {
-                    console.log("Bet Bot: Nenhuma aposta válida raspada no boletim aberto.");
                 }
             });
         }
-    }, 1500);
+
+        // --- GATILHO 2: DUPLO CLIQUE EM QUALQUER LUGAR DA TELA MANDA O QUE TIVER NO BOLETIM ---
+        if (!document.body.dataset.dblClickGatilho) {
+            document.body.dataset.dblClickGatilho = "true";
+            document.body.addEventListener('dblclick', () => {
+                console.log("🎯 DUPLO CLIQUE DETECTADO! FORÇANDO ENVIO DA APOSTA...");
+                const boletim = document.querySelector('.bs-BetSlip') || document.body;
+                const data = rasparDadosBoletim();
+
+                if (data) {
+                    console.log("🚀 Lançando pro servidor render...", data);
+                    enviarParaRender(data);
+                }
+            });
+        }
+
+    }, 2000);
 }
 
 // Funções Cosméticas
